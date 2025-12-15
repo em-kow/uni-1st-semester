@@ -134,6 +134,6 @@ void sprzataj_synow(synowie* s){ // korzystajac ze struktury drzewa puszczam rek
 }
 
 void gotowe() {
-    sprzataj_synow(biurko);
+    sprzataj_synow(biurko); // biurko jest korzeniem drzewa
     delete biurko;
 }
