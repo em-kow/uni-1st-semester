@@ -6,7 +6,7 @@ struct elem{ // element listy
     elem* next = nullptr; // wskaznik na nastepny
     worek* wsk_worek = nullptr; // wskaznik na worek, bedacy tym elementem listy
     przedmiot* wsk_przedmiot = nullptr; // wskaznik na przedmiot, bedacy tym elementem listy
-    // zawsze maksymalnie jedno z wsk_worek i wsk_przedmiot nie sa null
+    // zawsze maksymalnie jedno z wsk_worek i wsk_przedmiot nie sa null, bo element listy to albo worek albo przedmiot
 };
 
 struct synowie{ // gdy przedstawimy sytuacje jako drzewo, to synami worka lub biurka sa przedmioty i worki ktore sie w nim znajduja
@@ -42,17 +42,17 @@ static int ile_workow = 0; // ile aktualnie stworzylem workow (potrzebne do nume
 
 przedmiot* nowy_przedmiot(){
     przedmiot* p = new przedmiot;
-    elem* e = new elem; // element listy synow odpowiadajacy przedmiotowi
+    elem* e = new elem;
     e->wsk_przedmiot = p;
     p->gdzie = biurko;
     p->odpowiednik = e;
-    dodaj_syna(biurko, e); // dodaje element listy odpowiadajacy temu przedmiotowi na biurko
+    dodaj_syna(biurko, e); // dodaje ten przedmiot na biurko
     return p;
 }
 
 worek* nowy_worek(){
     worek* w = new worek;
-    elem* e = new elem; // element listy synow odpowiadajacy workowi
+    elem* e = new elem;
     e->wsk_worek = w;
     synowie* moi = new synowie;
     moi->ojciec = w;
@@ -60,7 +60,7 @@ worek* nowy_worek(){
     w->gdzie = biurko;
     w->odpowiednik = e;
     w->moi_synowie = moi;
-    dodaj_syna(biurko, e); // dodaje element listy odpowiadajacy temu workowi na biurko
+    dodaj_syna(biurko, e);
     return w;
 }
 
@@ -68,7 +68,7 @@ void wloz(przedmiot *co, worek *gdzie){ // wkladam przedmiot co do worka gdzie
     usun_syna(biurko, co->odpowiednik); // usuwam ten przedmiot z listy biurka
     dodaj_syna(gdzie->moi_synowie, co->odpowiednik); // dodaje ten przedmiot do listy tego, co jest w worku
     co->gdzie = gdzie->moi_synowie; // daje workowi informacje wsrod jakich synow jest
-    biurko->ile += 1;
+    ++ biurko->ile; // mimo usuniecia przedmiotu z biurka, dalej sie on na nim znajduje posrednio
 }
 
 void wloz(worek *co, worek *gdzie){ // wkladam worek co do worka gdzie (analogicznie jak przedmiot do worka)
@@ -79,43 +79,45 @@ void wloz(worek *co, worek *gdzie){ // wkladam worek co do worka gdzie (analogic
 }
 
 void wyjmij(przedmiot *p){ // wyjmuje przedmiot p z worka lezacego na biurku
-    usun_syna(p->gdzie, p->odpowiednik);
-    dodaj_syna(biurko, p->odpowiednik);
+    usun_syna(p->gdzie, p->odpowiednik); // usuwam przedmiot z listy worka
+    dodaj_syna(biurko, p->odpowiednik); // i dodaje na biurko
     p->gdzie = biurko;
-    biurko->ile -= 1;
+    -- biurko->ile; // przedmiot caly czas sie posrednio znajduje na biurko, a niepotrzebnie zwiekszylismy licznik biurka
 }
 
-void wyjmij(worek *w){ // wyjmuje worek w z worka lezacego na biurku
+void wyjmij(worek *w){ // wyjmuje worek w z worka lezacego na biurku, analogicznie jak przedmiot
     usun_syna(w->gdzie, w->odpowiednik);
     dodaj_syna(biurko, w->odpowiednik);
     w->gdzie = biurko;
     biurko->ile -= w->moi_synowie->ile;
 }
 
-int w_ktorym_worku(przedmiot *p){
+int w_ktorym_worku(przedmiot *p){ // sprawdzam ojca listy synow gdzie znajduje sie p
     if(p->gdzie->ojciec == nullptr) return -1;
     else return p->gdzie->ojciec->nr;
 }
 
-int w_ktorym_worku(worek *w){
+int w_ktorym_worku(worek *w){ // analogicznie jak przedmiot
     if(w->gdzie->ojciec == nullptr) return -1;
     else return w->gdzie->ojciec->nr;
 }
 
-int ile_przedmiotow(worek *w){
+int ile_przedmiotow(worek *w){ // sprawdzam licznik listy synow w
     return w->moi_synowie->ile;
 }
 
 void na_odwrot(worek *w){
-    usun_syna(biurko, w->odpowiednik);
-    std::swap(w->moi_synowie, biurko);
+    usun_syna(biurko, w->odpowiednik); // na poczatek wyjmuje ten worek z biurka, aby przy zamianie list nie bylo sytuacji ze W jest w W
+    std::swap(w->moi_synowie, biurko); // zamieniam listy synow, bo jedynie to sie zmienia przy na_odwrot
     w->moi_synowie->ojciec = w;
     biurko->ojciec = nullptr;
+    // ustalam aby ojcowie list synow sie zgadzali
     dodaj_syna(biurko, w->odpowiednik);
     w->gdzie = biurko;
+    // z powrotem wrzucam W na biurko
 }
 
-void sprzataj_synow(synowie* s) {
+void sprzataj_synow(synowie* s){ // korzystajac ze struktury drzewa puszczam rekurencyjny algorytm zwalniajacy pamiec
     elem* e = s->head;
     while(e != nullptr){
         elem* next = e->next;
