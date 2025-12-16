@@ -4,8 +4,6 @@
 struct elem;
 struct synowie;
 
-void sprzataj_synow(synowie* s);
-
 struct przedmiot {
     synowie* gdzie; // wsrod synow czego jest ten przedmiot
     elem* odpowiednik; // element listy "gdzie" odpowiadajacy temu przedmiotowi
@@ -52,6 +50,8 @@ int ile_przedmiotow(worek *w);
 // Cała zawartość worka w ląduje na biurku, a wszystko, co poza workiem w
 // znajdowało się bezpośrednio na biurku, ląduje wewnątrz worka w.
 void na_odwrot(worek *w);
+
+void sprzataj_synow(synowie* s);
 
 // Kończy i zwalnia pamięć
 void gotowe();
