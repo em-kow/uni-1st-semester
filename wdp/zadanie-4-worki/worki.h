@@ -1,19 +1,16 @@
 #ifndef WORKI_H
 #define WORKI_H
 
-struct elem;
 struct synowie;
 
 struct przedmiot {
     synowie* gdzie; // wsrod synow czego jest ten przedmiot
-    elem* odpowiednik; // element listy "gdzie" odpowiadajacy temu przedmiotowi
 };
 
 struct worek {
     int nr; // numer worka
     synowie* gdzie; // wsrod synow czego jest ten worek
     synowie* moi_synowie; // synowie tego worka
-    elem* odpowiednik; // // element listy "gdzie" odpowiadajacy temu workowi
 };
 
 // Nowy przedmiot na biurku
@@ -50,8 +47,6 @@ int ile_przedmiotow(worek *w);
 // Cała zawartość worka w ląduje na biurku, a wszystko, co poza workiem w
 // znajdowało się bezpośrednio na biurku, ląduje wewnątrz worka w.
 void na_odwrot(worek *w);
-
-void sprzataj_synow(synowie* s);
 
 // Kończy i zwalnia pamięć
 void gotowe();
