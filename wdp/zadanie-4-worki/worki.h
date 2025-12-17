@@ -1,16 +1,16 @@
 #ifndef WORKI_H
 #define WORKI_H
 
-struct synowie;
-
-struct przedmiot {
-    synowie* gdzie; // wsrod synow czego jest ten przedmiot
+struct przedmiot{
+    struct synowie;
+    // synowie: gdy przedstawimy sytuacje jako drzewo, to synami worka lub biurka sa przedmioty i worki ktore sie w nim znajduja
+    synowie* polozenie; // wsrod jakiego zbioru synow ten przedmiot lezy
 };
 
-struct worek {
+struct worek{
     int nr; // numer worka
-    synowie* gdzie; // wsrod synow czego jest ten worek
-    synowie* moi_synowie; // synowie tego worka
+    przedmiot::synowie* polozenie; // wsrod jakiego zbioru synow ten worek lezy
+    przedmiot::synowie* moi_synowie; // synowie tego worka
 };
 
 // Nowy przedmiot na biurku
